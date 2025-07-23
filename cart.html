@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>購物車</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      background-color: #fff1f7;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffb6c1;
+      padding: 10px 20px;
+      margin: -20px -20px 20px;
+    }
+    header h1 {
+      font-size: 20px;
+      color: white;
+      margin: 0;
+    }
+    .back-arrow {
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .cart-icon {
+      position: relative;
+      font-size: 20px;
+      color: white;
+    }
+    .cart-icon img {
+      width: 24px;
+      height: 24px;
+      filter: invert(1);
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    .item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 10px;
+    }
+    .item-info {
+      flex: 1;
+      text-align: left;
+    }
+    .item select {
+      margin-top: 5px;
+    }
+    .remove-btn {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .total {
+      text-align: right;
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+      color: #d63384;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px;
+      margin-top: 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center;">
+      <div class="back-arrow" onclick="history.back()">←</div>
+      <h1>購物車</h1>
+    </div>
+    <div class="cart-icon">
+      <img src="service-icon.png" alt="客服">
+    </div>
+  </header>
+
+  <div class="container" id="cart-container">
+    <!-- 購物車內容會由 JS 生成 -->
+  </div>
+
+  <script>
+    const cartContainer = document.getElementById("cart-container");
+
+    function renderCart() {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cartContainer.innerHTML = "";
+
+      if (cart.length === 0) {
+        cartContainer.innerHTML = "<p style='text-align:center;'>購物車是空的。</p>";
+        return;
+      }
+
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
+        const div = document.createElement("div");
+        div.className = "item";
+        div.innerHTML = `
+          <img src="${item.image}" alt="${item.name}">
+          <div class="item-info">
+            <div><strong>${item.name}</strong></div>
+            <div>$${item.price}</div>
+            <select data-index="${index}">
+              ${[...Array(10)].map((_, i) => 
+                `<option value="${i+1}" ${item.quantity === i+1 ? "selected" : ""}>${i+1}</option>`
+              ).join("")}
+            </select>
+          </div>
+          <div>
+            <div>$${subtotal}</div>
+            <button class="remove-btn" onclick="removeItem(${index})">刪除</button>
+          </div>
+        `;
+        cartContainer.appendChild(div);
+      });
+
+      const totalDiv = document.createElement("div");
+      totalDiv.className = "total";
+      totalDiv.textContent = `總金額：$${total}`;
+      cartContainer.appendChild(totalDiv);
+
+      const btn = document.createElement("button");
+      btn.className = "btn";
+      btn.textContent = "下單";
+      btn.onclick = () => {
+        window.location.href = "checkout.html";
+      };
+      cartContainer.appendChild(btn);
+
+      document.querySelectorAll("select").forEach(select => {
+        select.addEventListener("change", e => {
+          const idx = e.target.getAttribute("data-index");
+          cart[idx].quantity = parseInt(e.target.value);
+          localStorage.setItem("cart", JSON.stringify(cart));
+          renderCart();
+        });
+      });
+    }
+
+    function removeItem(index) {
+      let cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      cart.splice(index, 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      renderCart();
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>
