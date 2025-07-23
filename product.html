@@ -27,7 +27,11 @@
       position: relative;
       font-size: 20px;
       cursor: pointer;
-      color: white;
+    }
+    .cart-icon img {
+      width: 24px;
+      height: 24px;
+      filter: invert(1);
     }
     .cart-icon span {
       position: absolute;
@@ -94,10 +98,6 @@
       justify-content: center;
       gap: 10px;
     }
-    .cart-img {
-      width: 24px;
-      height: 24px;
-    }
   </style>
 </head>
 <body>
@@ -106,9 +106,8 @@
       <div class="back-arrow" onclick="history.back()">←</div>
       <h1>小林日貨鋪</h1>
     </div>
-    <div class="cart-icon" onclick="window.location.href='cart.html'">
-      <img src="cart-icon.png" class="cart-img" alt="購物車">
-      <span id="cart-count">0</span>
+    <div class="cart-icon" onclick="window.location.href='service.html'">
+      <img src="service-icon.png" alt="客服">
     </div>
   </header>
 
@@ -129,12 +128,12 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get("id"));
-    const products = JSON.parse(localStorage.getItem("products") || "[]");
+    let products = JSON.parse(localStorage.getItem("products")) || [];
 
     const product = products.find(p => p.id === id);
 
     if (product) {
-      document.getElementById("product-img").src = product.image;
+      document.getElementById("product-img").src = product.image || "https://via.placeholder.com/300";
       document.getElementById("product-name").textContent = product.name;
       document.getElementById("product-price").textContent = `$${product.price}`;
 
@@ -165,7 +164,7 @@
     function updateCartCount() {
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       const total = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById("cart-count").textContent = total;
+      document.getElementById("cart-count")?.textContent = total;
     }
 
     updateCartCount();
