@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>結帳</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      background-color: #fff1f7;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #ffb6c1;
+      padding: 10px 20px;
+      margin: -20px -20px 20px;
+    }
+    header h1 {
+      font-size: 20px;
+      color: white;
+      margin: 0;
+    }
+    .back-arrow {
+      font-size: 20px;
+      color: white;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .cart-icon {
+      position: relative;
+      font-size: 20px;
+      cursor: pointer;
+      color: white;
+    }
+    .cart-icon img {
+      width: 24px;
+      height: 24px;
+      filter: invert(1);
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #ff92c2;
+    }
+    .total {
+      text-align: right;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #d63384;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display: flex; align-items: center;">
+      <div class="back-arrow" onclick="history.back()">←</div>
+      <h1>結帳</h1>
+    </div>
+    <div class="cart-icon">
+      <img src="service-icon.png" alt="客服">
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="total" id="total"></div>
+
+    <form id="checkout-form">
+      <input type="text" name="name" placeholder="您的名字" required>
+      <input type="text" name="contact" placeholder="聯絡方式（Line 或 IG）" required>
+      <button type="submit">前往付款</button>
+    </form>
+  </div>
+
+  <script>
+    const totalEl = document.getElementById("total");
+    const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    totalEl.textContent = `總金額：$${total}`;
+
+    document.getElementById("checkout-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      // 你可以改成跳轉到自己的付款頁面（例如 formspree 感謝頁 或 line.me/...）
+      alert("訂單送出，將前往付款！");
+      window.location.href = "https://example.com/pay";  // ← 改成你的網址
+    });
+  </script>
+</body>
+</html>
